@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Menu, X, Bell, MessageCircle, User, LogOut, Building2, CircleDollarSign } from 'lucide-react';
+import { Menu, X, Bell, MessageCircle, User, LogOut, Building2, CircleDollarSign, Calendar as CalendarIcon} from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { Avatar } from '../ui/Avatar';
 import { Button } from '../ui/Button';
+import Calendar from '../calendar/Calendar';
 
 export const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -34,6 +35,11 @@ export const Navbar: React.FC = () => {
       icon: user?.role === 'entrepreneur' ? <Building2 size={18} /> : <CircleDollarSign size={18} />,
       text: 'Dashboard',
       path: dashboardRoute,
+    },
+    { 
+      icon: <CalendarIcon size={18} />,
+      text: 'Calendar',
+      path: user ? '/calendar' : '/login',
     },
     {
       icon: <MessageCircle size={18} />,

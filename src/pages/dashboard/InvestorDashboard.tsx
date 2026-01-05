@@ -10,6 +10,7 @@ import { useAuth } from '../../context/AuthContext';
 import { Entrepreneur } from '../../types';
 import { entrepreneurs } from '../../data/users';
 import { getRequestsFromInvestor } from '../../data/collaborationRequests';
+import { meetings } from '../../data/meetings';
 
 export const InvestorDashboard: React.FC = () => {
   const { user } = useAuth();
@@ -66,6 +67,31 @@ export const InvestorDashboard: React.FC = () => {
           </Button>
         </Link>
       </div>
+      
+      {/* Upcoming Meetings */}
+      {meetings.length > 0 && (
+        <Card>
+          <CardHeader>
+            <h2 className="text-lg font-medium text-gray-900">Upcoming Meetings</h2>
+          </CardHeader>
+          <CardBody>
+            <div className="space-y-4">
+              {meetings.map(meeting => (
+                <div key={meeting.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div>
+                    <h3 className="font-medium">{meeting.title}</h3>
+                    <p className="text-sm text-gray-600">
+                      {new Date(meeting.start).toLocaleString()} - {new Date(meeting.end).toLocaleString()}
+                    </p>
+                    <p className="text-sm text-gray-500">Participants: {meeting.participants.join(', ')}</p>
+                  </div>
+                  <Button size="sm">Join Meeting</Button>
+                </div>
+              ))}
+            </div>
+          </CardBody>
+        </Card>
+      )}
       
       {/* Filters and search */}
       <div className="flex flex-col md:flex-row gap-4">

@@ -30,6 +30,9 @@ import { DealsPage } from './pages/deals/DealsPage';
 // Chat Pages
 import { ChatPage } from './pages/chat/ChatPage';
 
+// Calendar Page
+import CalendarComponent from './components/calendar/Calendar';
+
 function App() {
   return (
     <AuthProvider>
@@ -55,7 +58,9 @@ function App() {
           <Route path="/investors" element={<DashboardLayout />}>
             <Route index element={<InvestorsPage />} />
           </Route>
-          
+          <Route path="/calendar" element={<DashboardLayout />}>
+            <Route index element={<CalendarComponent />} />
+          </Route>
           <Route path="/entrepreneurs" element={<DashboardLayout />}>
             <Route index element={<EntrepreneursPage />} />
           </Route>

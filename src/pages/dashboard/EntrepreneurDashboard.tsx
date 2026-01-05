@@ -10,6 +10,7 @@ import { useAuth } from '../../context/AuthContext';
 import { CollaborationRequest } from '../../types';
 import { getRequestsForEntrepreneur } from '../../data/collaborationRequests';
 import { investors } from '../../data/users';
+import { meetings } from '../../data/meetings';
 
 export const EntrepreneurDashboard: React.FC = () => {
   const { user } = useAuth();
@@ -93,7 +94,7 @@ export const EntrepreneurDashboard: React.FC = () => {
               </div>
               <div>
                 <p className="text-sm font-medium text-accent-700">Upcoming Meetings</p>
-                <h3 className="text-xl font-semibold text-accent-900">2</h3>
+                <h3 className="text-xl font-semibold text-accent-900">{meetings.length}</h3>
               </div>
             </div>
           </CardBody>
@@ -113,6 +114,29 @@ export const EntrepreneurDashboard: React.FC = () => {
           </CardBody>
         </Card>
       </div>
+      
+      {/* Upcoming Meetings */}
+      <Card>
+        <CardHeader>
+          <h2 className="text-lg font-medium text-gray-900">Upcoming Meetings</h2>
+        </CardHeader>
+        <CardBody>
+          <div className="space-y-4">
+            {meetings.map(meeting => (
+              <div key={meeting.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div>
+                  <h3 className="font-medium">{meeting.title}</h3>
+                  <p className="text-sm text-gray-600">
+                    {new Date(meeting.start).toLocaleString()} - {new Date(meeting.end).toLocaleString()}
+                  </p>
+                  <p className="text-sm text-gray-500">Participants: {meeting.participants.join(', ')}</p>
+                </div>
+                <Button size="sm">Join Meeting</Button>
+              </div>
+            ))}
+          </div>
+        </CardBody>
+      </Card>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Collaboration requests */}
