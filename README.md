@@ -4,7 +4,7 @@ A modern, full-featured business networking platform built with React, TypeScrip
 
 ## 🚀 Live Demo
 
-[View Live Application](https://nexus-apps.vercel.app/login) ]
+[View Live Application](https://nexus-apps.vercel.app/login) 
 
 ## ✨ Features
 

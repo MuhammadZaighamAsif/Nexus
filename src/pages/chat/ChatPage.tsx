@@ -11,6 +11,7 @@ import { Message } from '../../types';
 import { findUserById } from '../../data/users';
 import { getMessagesBetweenUsers, sendMessage, getConversationsForUser } from '../../data/messages';
 import { MessageCircle } from 'lucide-react';
+import VideoChat from '../../components/videoChat/VideoChat';
 
 export const ChatPage: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -18,6 +19,7 @@ export const ChatPage: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [conversations, setConversations] = useState<any[]>([]);
+  const [isVideoCallActive, setIsVideoCallActive] = useState(false);
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   
   const chatPartner = userId ? findUserById(userId) : null;
@@ -70,8 +72,36 @@ export const ChatPage: React.FC = () => {
       
       {/* Main chat area */}
       <div className="flex-1 flex flex-col">
-        {/* Chat header */}
-        {chatPartner ? (
+        {isVideoCallActive ? (
+          <div className="flex-1 flex flex-col">
+            <div className="border-b border-gray-200 p-4 flex justify-between items-center">
+              <div className="flex items-center">
+                <Avatar
+                  src={chatPartner?.avatarUrl}
+                  alt={chatPartner?.name}
+                  size="md"
+                  status={chatPartner?.isOnline ? 'online' : 'offline'}
+                  className="mr-3"
+                />
+                <div>
+                  <h2 className="text-lg font-medium text-gray-900">Video Call with {chatPartner?.name}</h2>
+                  <p className="text-sm text-gray-500">In call</p>
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsVideoCallActive(false)}
+                className="text-red-500 hover:text-red-700"
+              >
+                End Call
+              </Button>
+            </div>
+            <div className="flex-1 bg-black flex items-center justify-center">
+              <VideoChat />
+            </div>
+          </div>
+        ) : chatPartner ? (
           <>
             <div className="border-b border-gray-200 p-4 flex justify-between items-center">
               <div className="flex items-center">
@@ -106,6 +136,7 @@ export const ChatPage: React.FC = () => {
                   size="sm"
                   className="rounded-full p-2"
                   aria-label="Video call"
+                  onClick={() => setIsVideoCallActive(true)}
                 >
                   <Video size={18} />
                 </Button>
