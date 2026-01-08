@@ -6,11 +6,13 @@ import { Card, CardBody, CardHeader } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
 import { Badge } from '../../components/ui/Badge';
 import { EntrepreneurCard } from '../../components/entrepreneur/EntrepreneurCard';
+import { WalletBalance } from '../../components/payments/WalletBalance';
 import { useAuth } from '../../context/AuthContext';
 import { Entrepreneur } from '../../types';
 import { entrepreneurs } from '../../data/users';
 import { getRequestsFromInvestor } from '../../data/collaborationRequests';
 import { meetings } from '../../data/meetings';
+import { getWalletForUser } from '../../data/payments';
 
 export const InvestorDashboard: React.FC = () => {
   const { user } = useAuth();
@@ -127,7 +129,7 @@ export const InvestorDashboard: React.FC = () => {
       </div>
       
       {/* Stats summary */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="bg-primary-50 border border-primary-100">
           <CardBody>
             <div className="flex items-center">
@@ -171,6 +173,14 @@ export const InvestorDashboard: React.FC = () => {
             </div>
           </CardBody>
         </Card>
+
+        {/* Wallet Balance Card */}
+        {(() => {
+          const wallet = getWalletForUser(user.id);
+          return wallet ? (
+            <WalletBalance balance={wallet.balance} currency={wallet.currency} />
+          ) : null;
+        })()}
       </div>
       
       {/* Entrepreneurs grid */}

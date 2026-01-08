@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, CircleDollarSign, Building2, LogIn, AlertCircle } from 'lucide-react';
+import { Mail, Lock, CircleDollarSign, Building2, AlertCircle, Shield, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
@@ -10,25 +10,54 @@ export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<UserRole>('entrepreneur');
+  const [twoFactorCode, setTwoFactorCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [step, setStep] = useState<'login' | '2fa'>('login');
   
-  const { login } = useAuth();
+  const { login, verify2FA } = useAuth();
   const navigate = useNavigate();
   
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setIsLoading(true);
     
     try {
-      await login(email, password, role);
+      const requires2FA = await login(email, password, role);
+      if (requires2FA) {
+        setStep('2fa');
+      } else {
+        // Redirect based on user role
+        navigate(role === 'entrepreneur' ? '/dashboard/entrepreneur' : '/dashboard/investor');
+      }
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const handle2FASubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setIsLoading(true);
+    
+    try {
+      await verify2FA(twoFactorCode);
       // Redirect based on user role
       navigate(role === 'entrepreneur' ? '/dashboard/entrepreneur' : '/dashboard/investor');
     } catch (err) {
       setError((err as Error).message);
+    } finally {
       setIsLoading(false);
     }
+  };
+  
+  const handleBackToLogin = () => {
+    setStep('login');
+    setTwoFactorCode('');
+    setError(null);
   };
   
   // For demo purposes, pre-filled credentials
@@ -55,10 +84,13 @@ export const LoginPage: React.FC = () => {
           </div>
         </div>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Sign in to Business Nexus
+          {step === 'login' ? 'Sign in to Business Nexus' : 'Two-Factor Authentication'}
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
-          Connect with investors and entrepreneurs
+          {step === 'login' 
+            ? 'Connect with investors and entrepreneurs' 
+            : 'Enter the 6-digit code sent to your device'
+          }
         </p>
       </div>
 
@@ -71,117 +103,166 @@ export const LoginPage: React.FC = () => {
             </div>
           )}
           
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                I am a
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  className={`py-3 px-4 border rounded-md flex items-center justify-center transition-colors ${
-                    role === 'entrepreneur'
-                      ? 'border-primary-500 bg-primary-50 text-primary-700'
-                      : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-                  }`}
-                  onClick={() => setRole('entrepreneur')}
-                >
-                  <Building2 size={18} className="mr-2" />
-                  Entrepreneur
-                </button>
-                
-                <button
-                  type="button"
-                  className={`py-3 px-4 border rounded-md flex items-center justify-center transition-colors ${
-                    role === 'investor'
-                      ? 'border-primary-500 bg-primary-50 text-primary-700'
-                      : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-                  }`}
-                  onClick={() => setRole('investor')}
-                >
-                  <CircleDollarSign size={18} className="mr-2" />
-                  Investor
-                </button>
-              </div>
-            </div>
-            
-            <Input
-              label="Email address"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              fullWidth
-              startAdornment={<User size={18} />}
-            />
-            
-            <Input
-              label="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              fullWidth
-            />
-            
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                  Remember me
+          <form className="space-y-6" onSubmit={step === 'login' ? handleLoginSubmit : handle2FASubmit}>
+          {step === 'login' ? (
+            <>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  I am a
                 </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    className={`py-3 px-4 border rounded-md flex items-center justify-center transition-colors ${
+                      role === 'entrepreneur'
+                        ? 'border-primary-500 bg-primary-50 text-primary-700'
+                        : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                    }`}
+                    onClick={() => setRole('entrepreneur')}
+                  >
+                    <Building2 size={18} className="mr-2" />
+                    Entrepreneur
+                  </button>
+                  
+                  <button
+                    type="button"
+                    className={`py-3 px-4 border rounded-md flex items-center justify-center transition-colors ${
+                      role === 'investor'
+                        ? 'border-primary-500 bg-primary-50 text-primary-700'
+                        : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                    }`}
+                    onClick={() => setRole('investor')}
+                  >
+                    <CircleDollarSign size={18} className="mr-2" />
+                    Investor
+                  </button>
+                </div>
               </div>
+              
+              <Input
+                label="Email address"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                fullWidth
+                startAdornment={<Mail size={18} />}
+              />
+              
+              <Input
+                label="Password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                fullWidth
+                startAdornment={<Lock size={18} />}
+              />
+              
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <input
+                    id="remember-me"
+                    name="remember-me"
+                    type="checkbox"
+                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                    Remember me
+                  </label>
+                </div>
 
-              <div className="text-sm">
-                <a href="#" className="font-medium text-primary-600 hover:text-primary-500">
-                  Forgot your password?
-                </a>
+                <div className="text-sm">
+                  <Link to="/forgot-password" className="font-medium text-primary-600 hover:text-primary-500">
+                    Forgot your password?
+                  </Link>
+                </div>
               </div>
-            </div>
-            
-            <Button
-              type="submit"
-              fullWidth
-              isLoading={isLoading}
-              leftIcon={<LogIn size={18} />}
-            >
-              Sign in
-            </Button>
-          </form>
-          
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Demo Accounts</span>
-              </div>
-            </div>
-            
-            <div className="mt-4 grid grid-cols-2 gap-3">
-              <Button
-                variant="outline"
-                onClick={() => fillDemoCredentials('entrepreneur')}
-                leftIcon={<Building2 size={16} />}
-              >
-                Entrepreneur Demo
-              </Button>
               
               <Button
-                variant="outline"
-                onClick={() => fillDemoCredentials('investor')}
-                leftIcon={<CircleDollarSign size={16} />}
+                type="submit"
+                fullWidth
+                isLoading={isLoading}
               >
-                Investor Demo
+                Sign in
               </Button>
+            </>
+          ) : (
+            <>
+              <div className="text-center">
+                <Shield className="mx-auto h-12 w-12 text-primary-600" />
+                <p className="mt-2 text-sm text-gray-600">
+                  For your security, we've sent a 6-digit code to your registered device.
+                </p>
+              </div>
+              
+              <Input
+                label="Enter 6-digit code"
+                type="text"
+                value={twoFactorCode}
+                onChange={(e) => setTwoFactorCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                required
+                fullWidth
+                maxLength={6}
+                placeholder="000000"
+                className="text-center text-2xl tracking-widest"
+                startAdornment={<Shield size={18} />}
+              />
+              
+              <div className="flex space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleBackToLogin}
+                  className="flex-1"
+                  leftIcon={<ArrowLeft size={18} />}
+                >
+                  Back
+                </Button>
+                
+                <Button
+                  type="submit"
+                  className="flex-1"
+                  isLoading={isLoading}
+                  disabled={twoFactorCode.length !== 6}
+                >
+                  Verify
+                </Button>
+              </div>
+            </>
+          )}
+          </form>
+          
+          {step === 'login' && (
+            <div className="mt-6">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-gray-500">Demo Accounts</span>
+                </div>
+              </div>
+              
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => fillDemoCredentials('entrepreneur')}
+                  leftIcon={<Building2 size={16} />}
+                >
+                  Entrepreneur Demo
+                </Button>
+                
+                <Button
+                  variant="outline"
+                  onClick={() => fillDemoCredentials('investor')}
+                  leftIcon={<CircleDollarSign size={16} />}
+                >
+                  Investor Demo
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
           
           <div className="mt-6">
             <div className="relative">

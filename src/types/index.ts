@@ -70,7 +70,9 @@ export interface Document {
 
 export interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string, role: UserRole) => Promise<void>;
+  login: (email: string, password: string, role: UserRole) => Promise<boolean>;
+  verify2FA: (code: string) => Promise<void>;
+  toggle2FA: () => Promise<void>;
   register: (name: string, email: string, password: string, role: UserRole) => Promise<void>;
   logout: () => void;
   forgotPassword: (email: string) => Promise<void>;
@@ -78,4 +80,39 @@ export interface AuthContextType {
   updateProfile: (userId: string, updates: Partial<User>) => Promise<void>;
   isAuthenticated: boolean;
   isLoading: boolean;
+  twoFactorEnabled: boolean;
+}
+
+export type TransactionType = 'deposit' | 'withdraw' | 'transfer' | 'funding';
+
+export type TransactionStatus = 'pending' | 'completed' | 'failed';
+
+export interface Transaction {
+  id: string;
+  type: TransactionType;
+  amount: number;
+  senderId?: string;
+  receiverId?: string;
+  description: string;
+  status: TransactionStatus;
+  createdAt: string;
+  completedAt?: string;
+}
+
+export interface Wallet {
+  userId: string;
+  balance: number;
+  currency: string;
+  lastUpdated: string;
+}
+
+export interface FundingDeal {
+  id: string;
+  investorId: string;
+  entrepreneurId: string;
+  amount: number;
+  description: string;
+  status: 'pending' | 'funded' | 'cancelled';
+  createdAt: string;
+  fundedAt?: string;
 }

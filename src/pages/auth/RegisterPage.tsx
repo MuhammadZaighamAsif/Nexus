@@ -4,6 +4,7 @@ import { User, Mail, Lock, CircleDollarSign, Building2, AlertCircle } from 'luci
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { PasswordStrengthMeter } from '../../components/ui/PasswordStrengthMeter';
 import { UserRole } from '../../types';
 
 export const RegisterPage: React.FC = () => {
@@ -131,6 +132,8 @@ export const RegisterPage: React.FC = () => {
               fullWidth
               startAdornment={<Lock size={18} />}
             />
+            
+            {password && <PasswordStrengthMeter password={password} className="mt-2" />}
             
             <Input
               label="Confirm password"

@@ -1,5 +1,5 @@
 import React from 'react';
-import { User, Lock, Bell, Globe, Palette, CreditCard } from 'lucide-react';
+import { User, Lock, Bell, Globe, Palette, CreditCard, Shield } from 'lucide-react';
 import { Card, CardHeader, CardBody } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
@@ -8,7 +8,7 @@ import { Avatar } from '../../components/ui/Avatar';
 import { useAuth } from '../../context/AuthContext';
 
 export const SettingsPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, toggle2FA, twoFactorEnabled } = useAuth();
   
   if (!user) return null;
   
@@ -137,9 +137,17 @@ export const SettingsPage: React.FC = () => {
                     <p className="text-sm text-gray-600">
                       Add an extra layer of security to your account
                     </p>
-                    <Badge variant="error" className="mt-1">Not Enabled</Badge>
+                    <Badge variant={twoFactorEnabled ? "success" : "error"} className="mt-1">
+                      {twoFactorEnabled ? "Enabled" : "Not Enabled"}
+                    </Badge>
                   </div>
-                  <Button variant="outline">Enable</Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={toggle2FA}
+                    leftIcon={<Shield size={16} />}
+                  >
+                    {twoFactorEnabled ? "Disable" : "Enable"}
+                  </Button>
                 </div>
               </div>
               
