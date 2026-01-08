@@ -294,14 +294,11 @@ We welcome contributions! Please follow these steps:
 - Add proper error handling
 - Test on multiple devices/browsers
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/your-username/nexus/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-username/nexus/discussions)
+- **Issues**: [GitHub Issues](https://github.com/MuhammadZaighamAsif/nexus/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/MuhammadZaighamAsif/nexus/discussions)
 - **Documentation**: Check the `/docs` folder for detailed guides
 
 ## 🙏 Acknowledgments
@@ -326,7 +323,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact
 
-For questions or support, please open an issue on GitHub or contact via [email] (zaighamasif06@gmail.com) .
+For questions or support, please open an issue on GitHub or 
+contact via  [email](zaighamasif06@gmail.com) .
 
 ---
 
