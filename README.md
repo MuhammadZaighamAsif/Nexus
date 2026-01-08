@@ -95,7 +95,7 @@ A modern, full-featured business networking platform built with React, TypeScrip
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/nexus.git
+   git clone https://github.com/MuhammadZaighamAsif/nexus.git
    cd nexus
    ```
 
@@ -294,19 +294,6 @@ We welcome contributions! Please follow these steps:
 - Add proper error handling
 - Test on multiple devices/browsers
 
-
-## 📞 Support
-
-- **Issues**: [GitHub Issues](https://github.com/MuhammadZaighamAsif/nexus/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/MuhammadZaighamAsif/nexus/discussions)
-- **Documentation**: Check the `/docs` folder for detailed guides
-
-## 🙏 Acknowledgments
-
-- **React Team** for the amazing framework
-- **Tailwind CSS** for the utility-first approach
-- **Vercel** for seamless deployment
-- **Open source community** for inspiration and tools
 
 ---
 
