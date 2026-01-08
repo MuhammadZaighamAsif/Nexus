@@ -311,8 +311,10 @@ We welcome contributions! Please follow these steps:
 ## 📞 Contact
 
 For questions or support, please open an issue on GitHub or 
-contact via  [email](zaighamasif06@gmail.com) .
-
+contact via  email: 
+```bash
+zaighamasif06@gmail.com .
+```
 ---
 
 Built with ❤️ using modern web technologies.
